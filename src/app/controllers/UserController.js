@@ -43,7 +43,7 @@ class UserController {
         .when('oldPassword', (oldPassword, field) =>
           oldPassword ? field.required() : field
         ),
-      confirPassword: Yup.string().when('password', (password, field) =>
+      confirmPassword: Yup.string().when('password', (password, field) =>
         password ? field.required().oneOf([Yup.ref('password')]) : field
       ),
     });
@@ -68,7 +68,7 @@ class UserController {
       await res.status(401).json({ error: 'Password does not match' });
     }
 
-    const { id, name } = req.body;
+    const { id, name } = await user.update(req.body);
 
     return res.json({
       id,
