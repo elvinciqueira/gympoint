@@ -69,6 +69,59 @@ class RegistrationController {
 
     return res.json(registration);
   }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      student_id: Yup.number(),
+      plan_id: Yup.number(),
+      start_date: Yup.date(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails.' });
+    }
+
+    const registration = await Registration.findByPk(req.params.id);
+
+    if (!registration) {
+      return res.status(400).json({ error: "Enrollment doesn't exists. " });
+    }
+
+    const { id, plan_id, student_id, start_date } = await registration.update(
+      req.body
+    );
+
+    return res.json({
+      id,
+      plan_id,
+      start_date,
+      student_id,
+    });
+  }
+
+  async delete(req, res) {
+    const registration = await Registration.findByPk(req.params.id, {
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name', 'email'],
+        },
+      ],
+    });
+
+    if (registration.student_id !== req.userId) {
+      return res.status(401).json({
+        error: "You don't have permission to cancel this enrollment.",
+      });
+    }
+
+    registration.destroy({
+      where: { id: req.params.id },
+    });
+
+    return res.json(registration);
+  }
 }
 
 export default new RegistrationController();

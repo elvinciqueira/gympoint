@@ -31,6 +31,8 @@ routes.delete('/plans/:id', PlanController.delete);
 
 routes.get('/registrations', RegistrationController.index);
 routes.post('/registrations', RegistrationController.store);
+routes.delete('/registrations/:id', RegistrationController.delete);
+routes.put('/registrations/:id', RegistrationController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
