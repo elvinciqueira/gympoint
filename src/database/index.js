@@ -13,26 +13,30 @@ const models = [User, Student, File, Plan, Registration];
 
 class Database {
   constructor() {
+    this.connection = new Sequelize(databaseConfig);
+
+    const mongoURI = 'mongodb://192.168.99.100:27017/gympoint';
+
+    this.mongoConnection = mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: true,
+    });
+
     this.init();
+    this.associate();
   }
 
   init() {
-    this.connection = new Sequelize(databaseConfig);
-
-    models
-      .map(model => model.init(this.connection))
-      .map(model => model.associate && model.associate(this.connection.models));
+    models.forEach(model => model.init(this.connection));
   }
 
-  mongo() {
-    this.mongoConnection = mongoose.connect(
-      'mongodb://192.168.99.100:27017/gympoint',
-      {
-        useNewUrlParser: true,
-        useFindAndModify: true,
-        useUnifiedTopology: true,
+  associate() {
+    models.forEach(model => {
+      if (model.associate) {
+        model.associate(this.connection.models);
       }
-    );
+    });
   }
 }
 
