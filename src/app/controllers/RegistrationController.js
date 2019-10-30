@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { startOfHour, isBefore, parseISO } from 'date-fns';
+import { startOfHour, isBefore, parseISO, addMonths } from 'date-fns';
 
 import Registration from '../models/Registration';
 import Plan from '../models/Plan';
@@ -41,7 +41,7 @@ class RegistrationController {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    const { student_id, start_date } = req.body;
+    const { student_id, start_date, plan_id } = req.body;
 
     /**
      * Check for admin
@@ -62,9 +62,29 @@ class RegistrationController {
       return res.status(400).json({ error: 'Past dates are not permitted.' });
     }
 
+    const { title, duration, price } = await Plan.findOne({
+      where: { id: plan_id },
+    });
+
+    const student = await Student.findOne({
+      where: { id: student_id },
+    });
+
+    const dateEnd = addMonths(dateStart, duration);
+
+    const priceAll = price * duration;
+
+    const finalPrice = priceAll.toLocaleString('pt-br', {
+      style: 'currency',
+      currency: 'BRL',
+    });
+
     const registration = await Registration.create({
       student_id,
       start_date: dateStart,
+      price: finalPrice,
+      end_date: dateEnd,
+      plan_id,
     });
 
     return res.json(registration);
