@@ -5,6 +5,9 @@ import Registration from '../models/Registration';
 import Plan from '../models/Plan';
 import Student from '../models/Student';
 
+import RegistrationMail from '../jobs/RegistrationMail';
+import Queue from '../../lib/Queue';
+
 class RegistrationController {
   async index(req, res) {
     const { page = 1 } = req.query;
@@ -85,6 +88,14 @@ class RegistrationController {
       price: finalPrice,
       end_date: dateEnd,
       plan_id,
+    });
+
+    await registration.save();
+
+    await Queue.add(RegistrationMail.key, {
+      registration,
+      student,
+      title,
     });
 
     return res.json(registration);
