@@ -45,7 +45,7 @@ routes.delete('/registrations/:id', RegistrationController.delete);
 routes.put('/registrations/:id', RegistrationController.update);
 
 routes.get('/help-orders', GymHelpOrderController.index);
-routes.put('/help-orders/:id/answer', GymHelpOrderController.store);
+routes.put('/help-orders/:id/answer', GymHelpOrderController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
 

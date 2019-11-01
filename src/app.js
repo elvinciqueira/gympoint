@@ -16,7 +16,7 @@ class App {
 
     this.middlewares();
     this.routes();
-    this.execptionHandler();
+    this.exceptionHandler();
   }
 
   middlewares() {
@@ -33,7 +33,7 @@ class App {
     this.server.use(Sentry.Handlers.errorHandler());
   }
 
-  exeptionHandler() {
+  exceptionHandler() {
     this.server.use(async (err, req, res, next) => {
       const errors = await new Youch(err, req).toJSON();
 
