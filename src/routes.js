@@ -9,6 +9,8 @@ import FileController from './app/controllers/FileController';
 import PlanController from './app/controllers/PlanController';
 import RegistrationController from './app/controllers/RegistrationController';
 import CheckinController from './app/controllers/CheckinController';
+import HelpOrderController from './app/controllers/HelpOrderController';
+import GymHelpOrderController from './app/controllers/GymHelpOrderController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -17,6 +19,9 @@ const upload = multer(multerConfig);
 
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
+
+routes.post('/students/:id/help-orders', HelpOrderController.store);
+routes.get('/students/:id/help-orders', HelpOrderController.index);
 
 routes.get('/students/:id/checkins', CheckinController.index);
 routes.post('/students/:id/checkins', CheckinController.store);
@@ -38,6 +43,9 @@ routes.get('/registrations', RegistrationController.index);
 routes.post('/registrations', RegistrationController.store);
 routes.delete('/registrations/:id', RegistrationController.delete);
 routes.put('/registrations/:id', RegistrationController.update);
+
+routes.get('/help-orders', GymHelpOrderController.index);
+routes.put('/help-orders/:id/answer', GymHelpOrderController.store);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
